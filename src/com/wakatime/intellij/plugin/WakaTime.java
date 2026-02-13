@@ -193,7 +193,7 @@ public class WakaTime implements ApplicationComponent {
     }
 
     public static void checkApiKey() {
-        if (WakaTime.cancelApiKey) return;
+        if (WakaTime.cancelApiKey || ApiKey.isDialogOpened) return;
         ApplicationManager.getApplication().invokeLater(new Runnable(){
             public void run() {
                 // prompt for apiKey if it does not already exist

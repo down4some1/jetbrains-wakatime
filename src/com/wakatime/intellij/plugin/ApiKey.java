@@ -11,7 +11,7 @@ package com.wakatime.intellij.plugin;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
-import org.apache.commons.lang.StringEscapeUtils;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -28,6 +28,8 @@ public class ApiKey extends DialogWrapper {
     private final JTextField input;
     private final LinkPane link;
 
+    public static boolean isDialogOpened = false;
+
     public ApiKey(@Nullable Project project) {
         super(project, true);
         setTitle("WakaTime API Key");
@@ -40,6 +42,8 @@ public class ApiKey extends DialogWrapper {
         panel.add(input);
         link = new LinkPane("https://wakatime.com/api-key");
         panel.add(link);
+
+        Disposer.register(getDisposable(), () -> isDialogOpened = false);
 
         init();
     }
@@ -73,12 +77,17 @@ public class ApiKey extends DialogWrapper {
         super.doCancelAction();
     }
 
+    @Override
+    public void show() {
+        isDialogOpened = true;
+        super.show();
+    }
+
     public String promptForApiKey() {
         input.setText(ConfigFile.getApiKey());
         this.show();
         return input.getText();
     }
-
 }
 
 class LinkPane extends JTextPane {
